@@ -6,7 +6,7 @@ mongoose.set({strictQuery:true})
 
 app.use(express.json())
 
-mongoose.connect("mongodb+srv://sandy_varanasi:sRzKkk5zN4u6uAZG@sandy-clusture.eimj9vg.mongodb.net/group9Database",
+mongoose.connect("mongodb+srv://sandy_varanasi:sRzKkk5zN4u6uAZG@sandy-clusture.eimj9vg.mongodb.net/post-comment",
 {dbName:"group"},
 {useNewUrlParser:true})
     .then(() => console.log("MongoDb is connected"))
