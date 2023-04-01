@@ -1,4 +1,5 @@
 const postModel = require('../models/postModel');
+const mongoose = require('mongoose')
 
 const createPost = async (req, res) => {
     try {
@@ -6,9 +7,7 @@ const createPost = async (req, res) => {
 
         if(Object.keys(data).length==0) return res.status(400).send("please provide post and userId");
 
-        let { post,userId,...a} = data;
-
-        if(Object.keys(a).length!=0) return res.status(400).send("only post and userId is required");
+        let { post,userId} = data;
 
         if (!post) return res.status(400).send("please provide post");
         if (!userId) return res.status(400).send("please provide userId");
@@ -30,16 +29,14 @@ const getPost = async (req, res) => {
 
         if(Object.keys(data).length==0) return res.status(400).send("please provide userId");
 
-        let { userId,...a} = data;
-
-        if(Object.keys(a).length!=0) return res.status(400).send("only userId is required");
+        let { userId} = data;
 
         if (!userId) return res.status(400).send("please provide userId");
 
         if(!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if(!mongoose.isValidObjectId(postId)) return res.status(400).send("invalid postId");
 
-         let viewPost = await postModel.findOne({_id:postId,userId:userId,isDeleted:false}).populate('comment');
+         let viewPost = await postModel.findOne({_id:postId,userId:userId,isDeleted:false});
          if(!viewPost) return res.status(404).send({message: 'no such post found'})
         return res.status(200).send({data:viewPost});
     } catch (err) {
@@ -51,20 +48,10 @@ const getAllPost = async (req, res) => {
     try {
         let data = req.body
 
-        if(Object.keys(data).length==0) return res.status(400).send("please provide userId");
+         let viewPost = await postModel.find({isDeleted:false});
 
-        let { userId,...a} = data;
-
-        if(Object.keys(a).length!=0) return res.status(400).send("only userId is required");
-
-        if (!userId) return res.status(400).send("please provide userId");
-
-        if(!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
-
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
-
-         let viewPost = await postModel.find({userId:userId,isDeleted:false});
-         if(viewPost.length==0) return res.status(404).send({message: 'no such post found'})
+         if(viewPost.length==0) return res.status(404).send({message: 'no post found'})
+         
         return res.status(200).send({data:viewPost});
     } catch (err) {
         res.status(500).send(err.message);
