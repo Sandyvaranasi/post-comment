@@ -23,7 +23,7 @@ const userLogin = async (req, res) => {
             user = await userModel.create(data);
         }
         let token = jwt.sign({ userId: user._id }, "very secret string");
-        return res.status(200).send({ message: "ligin successful", token: token });
+        return res.status(200).send({ message: "ligin successful",userId: user._id, token: token });
     } catch (err) {
         res.status(500).send(err.message);
     }
