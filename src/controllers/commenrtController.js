@@ -1,6 +1,7 @@
 const commentModel = require('../models/commentModel');
 const postModel = require('../models/postModel');
 const replyModel = require('../models/replyModel');
+const userModel = require('../models/userModel')
 const mongoose = require('mongoose')
 
 const createComment = async (req, res) => {
@@ -53,7 +54,7 @@ const getComment = async (req, res) => {
         const user = await userModel.findOne({_id:userId});
         if(!user) return res.status(404).send({message:'no such user'});
 
-        let viewComment = await commentModel.find({ postId: postId, userId: userId, isDeleted: false }).populate('reply');
+        let viewComment = await commentModel.find({ postId: postId, userId: userId, isDeleted: false }).populate('postId');
         if (!viewComment) return res.status(404).send({ message: 'no such comment found' })
 
         return res.status(200).send({ data: viewComment });
@@ -76,7 +77,7 @@ const getAllComment = async (req, res) => {
 
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
         let viewComment = await commentModel.find({ userId: userId, isDeleted: false });
         if (viewComment.length == 0) return res.status(404).send({ message: 'no such comments found' })
@@ -103,7 +104,7 @@ const updateComment = async (req, res) => {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if (!mongoose.isValidObjectId(commentId)) return res.status(400).send("invalid commentId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
         let editComment = await commentModel.findOneAndUpdate({ _id: commentId, userId: userId, isDeleted: false }, { comment: comment }, { new: true });
         if (!editComment) return res.status(404).send({ message: 'no such comment found to update' })
@@ -129,7 +130,7 @@ const deleteComment = async (req, res) => {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if (!mongoose.isValidObjectId(commentId)) return res.status(400).send("invalid commentId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
         let deletedComment = await commentModel.findOneAndUpdate({ _id: commentId, userId: userId, isDeleted: false }, { isDeleted: true }, { new: true });
         await replyModel.updateMany({ commentId: commentId, isDeleted: false }, { isDeleted: true }, { new: true });

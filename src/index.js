@@ -6,8 +6,8 @@ mongoose.set({strictQuery:true})
 
 app.use(express.json())
 
-mongoose.connect("mongodb+srv://sandy_varanasi:sRzKkk5zN4u6uAZG@sandy-clusture.eimj9vg.mongodb.net/post-comment",
-{dbName:"group"},
+mongoose.connect("mongodb+srv://sandy_varanasi:sRzKkk5zN4u6uAZG@sandy-clusture.eimj9vg.mongodb.net/postComment",
+{dbName:"postComment"},
 {useNewUrlParser:true})
     .then(() => console.log("MongoDb is connected"))
     .catch(err => console.log(err))

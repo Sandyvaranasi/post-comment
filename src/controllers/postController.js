@@ -75,7 +75,7 @@ const updatePost = async (req, res) => {
         if(!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if(!mongoose.isValidObjectId(postId)) return res.status(400).send("invalid postId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
          let editPost = await postModel.findOneAndUpdate({_id:postId,userId:userId,isDeleted:false},{post:post},{new:true});
          if(!editPost) return res.status(404).send({message: 'no such post found to update'})
@@ -101,7 +101,7 @@ const deletePost = async (req, res) => {
         if(!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if(!mongoose.isValidObjectId(postId)) return res.status(400).send("invalid postId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
          let deletedPost = await postModel.findOneAndUpdate({_id:postId,userId:userId,isDeleted:false},{isDeleted:true},{new:true});
          if(!deletedPost) return res.status(404).send({message: 'no such post found to delete'})

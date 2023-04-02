@@ -1,6 +1,6 @@
 const commentModel = require('../models/commentModel');
-const postModel = require('../models/postModel');
 const replyModel = require('../models/replyModel');
+const userModel = require('../models/userModel');
 const mongoose = require('mongoose')
 
 const createReply = async (req, res) => {
@@ -100,7 +100,7 @@ const updateReply = async (req, res) => {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if (!mongoose.isValidObjectId(replyId)) return res.status(400).send("invalid replyId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
         let editReply = await replyModel.findOneAndUpdate({ _id: replyId, userId: userId, isDeleted: false }, { reply: reply }, { new: true });
         if (!editReply) return res.status(404).send({ message: 'no such reply found to update' })
@@ -126,10 +126,13 @@ const deleteReply = async (req, res) => {
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send("invalid userId");
         if (!mongoose.isValidObjectId(replyId)) return res.status(400).send("invalid replyId");
 
-        //if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
+        if(userId != req.userId) return res.status(403).send({message: 'you are not authorised for this action'})
 
         let editReply = await replyModel.findOneAndUpdate({ _id: replyId, userId: userId, isDeleted: false }, { isDeleted: true }, { new: true });
         if (!editReply) return res.status(404).send({ message: 'no such reply found to delete' })
+
+        await commentModel.findOneAndUpdate({_id:editReply.commentId,isDeleted:false},{isReply:false})
+
         return res.status(200).send({ message: "reply deleted successfully"});
     } catch (err) {
         res.status(500).send(err.message);

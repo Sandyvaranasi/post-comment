@@ -8,12 +8,12 @@ const commentSchema = new mongoose.Schema({
     postId: {
         type : mongoose.Types.ObjectId,
         required : true,
-        res : 'postComment'
+        ref : 'postComment'
     },
     userId: {
         type : mongoose.Types.ObjectId,
         required : true,
-        res : 'userComment'
+        ref : 'userComment'
     },
     isReply:{
         type: Boolean,
